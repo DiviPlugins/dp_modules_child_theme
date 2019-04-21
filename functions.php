@@ -22,7 +22,7 @@ add_filter('upload_mimes', 'custom_myme_types', 1, 1);
  */
 
 function api_endpoint_for_modules_data() {
-    register_rest_route('custom_module/v1', '/modules', array(
+    register_rest_route('divi_plugins/v1', '/modules', array(
         array('method' => 'GET', 'callback' => 'get_custom_modules_info'),
         array('method' => 'POST', 'callback' => 'add_new_module')
     ));
@@ -39,6 +39,7 @@ function get_custom_modules_info() {
     if ($query->have_posts()) {
         while ($query->have_posts()) {
             $query->the_post();
+            $data['id'] = get_the_ID();
             $data['name'] = get_the_title();
             $data['description'] = get_the_excerpt();
             $data['category'] = has_category(2) ? 'module' : 'user-module';
@@ -46,7 +47,7 @@ function get_custom_modules_info() {
             array_push($all_modules_info, $data);
         }
     } else {
-        return new WP_Error('no_modules', 'There are no custom modules published at the moment.', array('status' => 404));
+        $all_modules_info = array('api_query_errors' => 'There are no custom modules published at the moment.');
     }
     wp_reset_postdata();
     $response = new WP_REST_Response($all_modules_info, 200);

@@ -55,9 +55,12 @@ function get_custom_modules_info() {
             if (is_array($file_info)) {
                 $file_url = $file_info[1]["file"];
                 if (!empty($file_url)) {
+                    $file_url = str_replace("http://modules.diviplugins.com", $_SERVER['DOCUMENT_ROOT'], $file_url);
                     $data['file_content'] = file_get_contents($file_url);
+                    if ($data['file_content'] !== false) {
+                        $all_modules_info[$data['id']] = $data;
+                    }
                 }
-                $all_modules_info[$data['id']] = $data;
             }
         }
         $all_modules_info['api_query_errors'] = "OK";

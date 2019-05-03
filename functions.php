@@ -53,7 +53,9 @@ function get_custom_modules_info() {
             $data['link'] = get_the_permalink();
             $data['category'] = has_term(2, "download_category") ? 'module' : 'user-module';
             if (is_array($file_info)) {
-                $file_url = $file_info[1]["file"];
+                foreach ($file_info as $file) {
+                    $file_url = $file["file"];
+                }
                 if (!empty($file_url)) {
                     $file_url = str_replace("http://modules.diviplugins.com", $_SERVER['DOCUMENT_ROOT'], $file_url);
                     $data['file_content'] = file_get_contents($file_url);

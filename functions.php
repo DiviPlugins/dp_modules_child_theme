@@ -51,6 +51,14 @@ function get_custom_modules_info() {
             $data['thumbnail'] = get_the_post_thumbnail_url($data['id'], "medium");
             $data['description'] = get_the_excerpt();
             $data['link'] = get_the_permalink();
+            $terms = get_the_terms($data['id'], "download_category");
+            $terms_classes = array();
+            foreach ($terms as $term) {
+                if (!in_array($term->term_id, array(2, 3))) {
+                    array_push($terms_classes, $term->slug);
+                }
+            }
+            $data['terms'] = $terms_classes;
             $data['category'] = has_term(2, "download_category") ? 'module' : 'user-module';
             if (is_array($file_info)) {
                 foreach ($file_info as $file) {
@@ -60,12 +68,16 @@ function get_custom_modules_info() {
                     $file_url = str_replace("http://modules.diviplugins.com", $_SERVER['DOCUMENT_ROOT'], $file_url);
                     $data['file_content'] = file_get_contents($file_url);
                     if ($data['file_content'] !== false) {
-                        $all_modules_info[$data['id']] = $data;
+                        $all_modules_info['modules'][$data['id']] = $data;
                     }
                 }
             }
         }
         $all_modules_info['api_query_errors'] = "OK";
+        $all_modules_info['terms'] = get_terms(array(
+            'taxonomy' => "download_category",
+            'exclude' => array(2, 3)
+        ));
     } else {
         $all_modules_info['api_query_errors'] = __('There are no custom modules published at the moment.');
     }
